@@ -1,0 +1,21 @@
+ @font-face {
+    font-family: 'NexaBold';
+    src:url('NexaBold.ttf.woff') format('woff'),
+        url('NexaBold.ttf.svg#NexaBold') format('svg'),
+        url('NexaBold.ttf.eot'),
+        url('NexaBold.ttf.eot?#iefix') format('embedded-opentype'); 
+    font-weight: normal;
+    font-style: normal;
+}
+
+body {
+  margin: 0;
+  font-size: 17px;
+  font-family: arial, georgia;
+}
+
+.main-header .logo {
+  font-family: NexaBold;
+  font-size: 25px;
+  font-weight: bold;
+}
