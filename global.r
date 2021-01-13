@@ -1,6 +1,6 @@
 #########################################################################################
 #                                     Leo Blakely                                       #
-#                                   Modified: 1.31.2020                                 # 
+#                                   Modified: 1.12.2021                                 # 
 #                                 2020 Robot Scouting                                   #
 #   ______  _____    _____   _______                        _  _   ____    ___    ___   #
 #  | ____| |  __ \  / ____| |__   __|                      | || | |___ \  / _ \  / _ \  #
@@ -58,7 +58,7 @@ options(stringsAsFactors = FALSE)
 
 raw.result <-
   GET(
-    "https://www.thebluealliance.com/api/v3/event/2020ndgf/matches/simple?X-TBA-Auth-Key=T5l4si2D8i7FOrZc9hXhUlI3CRRU1elBsM6YflBdPKQfdCExpgT0SQHQ6SuWNkMq"
+    "https://www.thebluealliance.com/api/v3/event/2019code/matches/simple?X-TBA-Auth-Key=T5l4si2D8i7FOrZc9hXhUlI3CRRU1elBsM6YflBdPKQfdCExpgT0SQHQ6SuWNkMq"
   )
 
 #The remainder of this code cleans the API raw result
@@ -144,7 +144,7 @@ listOfTeams <-
 
 #Gets only unique values
 listOfTeams <- listOfTeams %>%
-  distinct()
+  distinct_()
 
 #meltData Function, melts datatables for display in a scatter chart by useing teams as index
 #' meltData
