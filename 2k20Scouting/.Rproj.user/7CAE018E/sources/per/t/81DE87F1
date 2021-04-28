@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1563289613414.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3655582185",
+    "id" : "81DE87F1",
+    "lastKnownWriteTime" : 1563821346,
+    "last_content_update" : 1563821346645,
+    "path" : "~/HDWDashboard/global.r",
+    "project_path" : "global.r",
+    "properties" : {
+        "cursorPosition" : "64,0",
+        "scrollLine" : "38"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

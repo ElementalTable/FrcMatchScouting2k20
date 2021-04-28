@@ -1,0 +1,89 @@
+header <- dashboardHeader(title = "Drone Inspection HDW", dropdownMenuOutput("messageMenu"), dropdownMenuOutput("tasks"))
+
+sidebar <- dashboardSidebar(
+    sidebarMenu(
+    menuItem("Dashboard", tabName = "dashboard", icon = icon("dashboard")),
+    menuItem("Controls", tabName = 'controls', icon = icon('sliders-h')),
+    menuItem("Graphs", tabName = 'graphs', icon = icon('chart-area')),
+    sliderInput("bins","Number of bins", min = 1, max = 100, value = 50),
+    dateRangeInput("dates",h3("Date Range"), min = min(over_time_complete$Date), max = max(over_time_complete$Date),start = min(over_time_complete$Date), end = max(over_time_complete$Date))
+    )
+    
+)
+
+body <- dashboardBody(
+    tabItems(
+        tabItem(tabName = 'dashboard',
+               fluidRow(
+                   box(width = 4,
+                       C3GaugeOutput("kpi1")
+                   ),
+                   box(width = 4,
+                       C3GaugeOutput("kpi2")
+                   ),
+                   box(width = 4,
+                       C3GaugeOutput("kpi3")
+                   )
+               ),
+               fluidRow(
+                   box(width = 12,
+                       C3StackedChartOutput("overviewChart")
+                   )
+               ),
+               fluidRow(
+                   box(width = 3,
+                       C3pieOutput("pie1")
+                   ),
+                   box(width = 3,
+                       C3pieOutput("pie2")
+                   ),
+                   box(width = 3,
+                       C3pieOutput("pie3")
+                   ),
+                   box(
+                       C3pieOutput("pie4")
+                   )
+               )
+        ),
+        tabItem(tabName = 'controls',
+                box(width = 5
+                )
+        ),
+        tabItem(tabName = "graphs",
+            fluidRow(
+                box( width = 5, title = 'Complete to Date',status = badgestats, solidHeader = TRUE,
+                plotOutput("dateRange")
+                ),
+                box(width = 5, title = "Line Bar Graph", solidHeader = TRUE,
+                    C3LineBarChartOutput("lineBar")
+                ),
+            fluidRow(
+                box(width = 10,
+                    C3StackedChartOutput("stackedChart1")
+                    ,bsButton("update1","Zoom",size = "small", type = "toggle")
+                    ,bsButton("update3", "toggle spline", size = "small", type = "toggle")
+                    ,bsButton("update4", "Unstack Toggle", size = "small", type = "toggle")
+                    ,selectInput("dataset","Dataset",choices = c("count","IncompleteCount","total"))
+                    ,selectInput("type","type",choices = c("spline","line","bar","area","area-spline"))
+                    ,bsButton("update_type","Update Type",size = "small")
+                )
+            )
+                )
+            )
+        )
+    )
+
+
+shinyUI(
+    bootstrapPage(theme = "styleing.css",
+        includeScript("www/message.js")
+
+        #div(id = "container",
+            ,dashboardPage(skin = "green",
+                header, sidebar, body
+            ),
+            textOutput("text")
+        #)
+    )
+)
+

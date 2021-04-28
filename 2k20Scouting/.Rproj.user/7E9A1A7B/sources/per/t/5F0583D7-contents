@@ -1,0 +1,127 @@
+header <- dashboardHeader(title = "2020 Scouting", dropdownMenuOutput("messageMenu"), dropdownMenuOutput("tasks"))
+
+sidebar <- dashboardSidebar(
+    sidebarMenu(
+    menuItem("Dashboard", tabName = "dashboard", icon = icon("dashboard")),
+    menuItem("Data Input", tabName = 'datainput', icon = icon('sliders-h')),
+    menuItem("Data Analysis", tabName = 'dataanalysis', icon = icon('chart-area')),
+    menuItem("Settings", tabName = 'slicers', icon = icon('chart-area'))
+    )
+    
+)
+
+
+
+body <- dashboardBody(
+    tabItems(
+        tabItem(tabName = 'dashboard',
+               fluidRow(
+                   box(width = 4,
+                       C3GaugeOutput("kpi1")
+                   ),
+                   box(width = 4,
+                       C3GaugeOutput("kpi2")
+                   ),
+                   box(width = 4,
+                       C3GaugeOutput("kpi3")
+                   )
+               ),
+               fluidRow(
+                   box(width = 12,
+                       C3StackedChartOutput("overviewChart")
+                   )
+               ),
+               fluidRow(
+                   box(width = 3,
+                       C3pieOutput("pie1")
+                   ),
+                   box(width = 3,
+                       C3pieOutput("pie2")
+                   ),
+                   box(width = 3,
+                       C3pieOutput("pie3")
+                   ),
+                   box(
+                       C3pieOutput("pie4")
+                   )
+               )
+        ),
+        tabItem(tabName = 'datainput',
+                box(width = 10, solidHeader = TRUE,
+                    titlePanel("Edit and save a table"),
+                    sidebarLayout(
+                        sidebarPanel(
+                            helpText("Shiny app based on an example given in the rhandsontable package.", 
+                                     "Right-click on the table to delete/insert rows.", 
+                                     "Double-click on a cell to edit"),
+                            
+                            wellPanel(
+                                h3("Table options"),
+                                radioButtons("useType", "Use Data Types", c("TRUE", "FALSE"))
+                            ),
+                            br(), 
+                            
+                            wellPanel(
+                                h3("Save"),
+                                actionButton("save", "Save table")
+                            )        
+                            
+                        ),
+                        
+                        mainPanel(
+                            
+                            rHandsontableOutput("hot")
+                            
+                        )
+                    )
+                )
+        ),
+        tabItem(tabName = "dataanalysis",
+            fluidRow(
+                box( width = 5, title = 'Complete to Date'
+                    #plotOutput("dateRange")
+                ),
+                box(width = 5, title = "Line Bar Graph", solidHeader = TRUE
+                    #C3LineBarChartOutput("lineBar")
+                ),
+            fluidRow(
+                box(width = 10,
+                    C3StackedChartOutput("stackedChart1")
+                    ,bsButton("update1","Zoom",size = "small", type = "toggle")
+                    ,bsButton("update3", "toggle spline", size = "small", type = "toggle")
+                    ,bsButton("update4", "Unstack Toggle", size = "small", type = "toggle")
+                    ,selectInput("dataset","Dataset",choices = c("count","IncompleteCount","total"))
+                    ,selectInput("type","type",choices = c("spline","line","bar","area","area-spline"))
+                    ,bsButton("update_type","Update Type",size = "small")
+                )
+            )
+                )
+            ),
+        tabItem(tabName = "slicers",
+                  fluidRow(
+                    box(width = 5, title = 'slicers'
+                        
+                        ),
+                    box(width = 5, title = 'Settings',
+                        radioButtons("scoutNum", "Scout Number", c("1","2","3","4","5","6"))
+                        )
+                  )
+                )
+        )
+    )
+    
+
+
+shinyUI(
+    bootstrapPage(theme = "styleing.css",
+        includeScript("www/message.js")
+
+        #div(id = "container",
+            ,dashboardPage(skin = "green",
+                header, sidebar, body
+            ),
+            textOutput("text")
+        #)
+    )
+)
+

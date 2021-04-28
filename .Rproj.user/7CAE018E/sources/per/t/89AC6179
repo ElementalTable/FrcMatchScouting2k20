@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1563220229674.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3540468794",
+    "id" : "89AC6179",
+    "lastKnownWriteTime" : 1562181197,
+    "last_content_update" : 1562181197,
+    "path" : "~/HDWDashboard/www/message.js",
+    "project_path" : "www/message.js",
+    "properties" : {
+        "cursorPosition" : "15,0",
+        "scrollLine" : "0"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 6,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "js"
+}

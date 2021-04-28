@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1562346887264.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "4034585970",
+    "id" : "4BE1F1D6",
+    "lastKnownWriteTime" : 1563311383,
+    "last_content_update" : 1563311383120,
+    "path" : "~/HDWDashboard/Packages/install.R",
+    "project_path" : "Packages/install.R",
+    "properties" : {
+        "cursorPosition" : "18,27",
+        "scrollLine" : "6"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 4,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

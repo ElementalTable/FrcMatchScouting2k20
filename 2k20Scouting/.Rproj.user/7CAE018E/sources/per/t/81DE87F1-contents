@@ -1,0 +1,88 @@
+#read in data
+inputdata <- readxl::read_excel("Book1.xlsx")
+drones_removed <- inputdata
+
+#set up values for messageData
+inspectedBy <- inputdata$nisc_inspected_by
+inspectedComments <- inputdata$InspNotes
+inspectedDate <- inputdata$nisc_inspected_date
+
+#create messageData and remove N/A values
+messageData <- data.frame("from" = inspectedBy, "message" = inspectedComments,"datetime" = inspectedDate)
+messageData <- messageData %>% drop_na
+
+#creates percent complete
+total <- sum(inputdata$A_TTTotal)
+complete <- sum(inputdata$A_TTComplete)
+percent <- (complete/total)*100
+percent <- data.frame(percent)
+percent$percent <- round(percent$percent)
+
+#formulas
+grouping_totals <- function(df){
+  require("dplyr")
+  require("lazyeval")
+  out<-drones_removed %>% group_by_(df) %>% filter(A_TTComplete > 0) %>%
+    summarize(count = n())
+  return(out)
+}
+
+grouping_totals_incomplete <- function(df){
+  require("dplyr")
+  require("lazyeval")
+  out<-drones_removed %>% group_by_(df) %>% filter(A_TTInComplete > 0) %>%
+    summarize(count = n())
+  return(out)
+}
+
+count_by_type <- function(table,df){
+  require("dplyr")
+  require("lazyeval")
+  out <- table %>% group_by_(df) %>% summarise(count = n())
+  return(out)
+}
+dataset <- data.frame(Time=c("2016-01-05","2016-01-12","2016-01-24"),
+                      GREEN=c(0.1,0,0.2),
+                      RED=c(0.9,1,0.8),
+                      Total=c(320,210,190))
+
+
+
+#creates data set for date graphing
+over_time_complete <- grouping_totals("nisc_inspected_date")
+over_time_complete <- over_time_complete %>% separate(nisc_inspected_date, c('Date','Time'),' ', extra = 'merge',)
+over_time_complete <- over_time_complete %>% mutate(Date = as.Date(Date))
+over_time_complete <- over_time_complete %>% ddply("Date",numcolwise(sum))
+over_time_complete$Date <- as.Date(over_time_complete$Date, format = "%Y-%m-%d")
+over_time_complete$count <- cumsum(over_time_complete$count)
+IncompleteCount <- total - over_time_complete$count
+over_time_complete <- over_time_complete[order(over_time_complete$Date),]
+over_time_complete <- cbind(over_time_complete, IncompleteCount)
+over_time_complete <- transform(over_time_complete, count = as.numeric(count))
+over_time_complete <- transform(over_time_complete, IncompleteCount = as.numeric(IncompleteCount))
+over_time_complete <- cbind(over_time_complete, total)
+
+#creates badgestats and gives it a value
+if(percent > 50){
+  badgestats <- "success" 
+  colorizer <- "green"
+}
+if(50 > percent & percent > 20){
+  badgestats <- "warning"
+  colorizer <- 'yellow'
+}else{
+  badgestats <- "danger"
+  colorizer <- "red"
+}
+ getSeries <- function(n = 100, drift = 0.1, walk = 4, scale=100){
+   y <- scale * cumsum(rnorm(n = n, mean = drift, sd = sqrt(walk)))
+   y <- round(y)
+   return(y + abs(min(y)))
+ }
+
+#drones_removed$nisc_inspected_date <- drones_removed %>% separate(nisc_inspected_date, c('Date','Time'),' ')
+
+#datesVScomplete <- data.frame("Time" = drones_removed$nisc_inspected_date$Date, "Complete"=sum(drones_removed$A_TTComplete), "Incomplete"= sum(drones_removed$A_TTInComplete))
+#datesVScomplete$Time <- as.Date(datesVScomplete$Time, format = "%Y-%m-%d")
+
+#datesVScomplete <- datesVScomplete %>% drop_na

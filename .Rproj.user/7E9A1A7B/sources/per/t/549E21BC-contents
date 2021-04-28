@@ -1,0 +1,74 @@
+library(shiny)
+library(shinydashboard)
+library(shinyjs)
+library(readxl)
+library(plyr)
+library(tibble)
+library(dplyr)
+library(haven)
+library(tidyr)
+library(lazyeval)
+library(tidyverse)
+library(cmna)
+library(htmlwidgets)
+library(plotly)
+library(ggplot2)
+library(shinyBS)
+library(rhandsontable)
+library(jsonlite)
+library(httr)
+library(lubridate)
+library(splitstackshape)
+library(stringr)
+library(`data.table`)
+library(devtools)
+library(C3)
+
+options(stringsAsFactors = FALSE)
+
+raw.result <- GET("https://www.thebluealliance.com/api/v3/event/2019code/matches/simple?X-TBA-Auth-Key=T5l4si2D8i7FOrZc9hXhUlI3CRRU1elBsM6YflBdPKQfdCExpgT0SQHQ6SuWNkMq")
+apiCall <- content(raw.result, "text")
+apiCallFromJSON <- fromJSON(apiCall, flatten = TRUE)
+apiCallDF <- as.data.frame(apiCallFromJSON)
+rm(apiCall, apiCallFromJSON, raw.result)
+
+apiCallDF <- apiCallDF %>%
+  select(-actual_time, -comp_level, -event_key, -key, -match_number, -predicted_time, -set_number, -time, -winning_alliance, -`alliances.blue.dq_team_keys`, -`alliances.blue.score`, -`alliances.blue.surrogate_team_keys`, -`alliances.red.dq_team_keys`, -`alliances.red.score`, -`alliances.red.surrogate_team_keys`)
+
+apiCallDF <- concat.split(apiCallDF, 1, sep = ",")
+apiCallDF <- concat.split(apiCallDF, 2, sep = ",")
+
+apiCallDF <- apiCallDF %>%
+  select(-`alliances.blue.team_keys`, -`alliances.red.team_keys`)
+
+apiCallDF$alliances.blue.team_keys_1 <- str_remove(apiCallDF$alliances.blue.team_keys_1, fixed("c(\"frc"))
+apiCallDF$alliances.blue.team_keys_1 <- str_remove(apiCallDF$alliances.blue.team_keys_1, fixed("\""))
+apiCallDF$alliances.blue.team_keys_2 <- str_remove(apiCallDF$alliances.blue.team_keys_2, fixed("frc"))
+apiCallDF$alliances.blue.team_keys_2 <- str_remove_all(apiCallDF$alliances.blue.team_keys_2, fixed("\""))
+apiCallDF$alliances.blue.team_keys_3 <- str_remove(apiCallDF$alliances.blue.team_keys_3, fixed("frc"))
+apiCallDF$alliances.blue.team_keys_3 <- str_remove_all(apiCallDF$alliances.blue.team_keys_3, fixed("\""))
+apiCallDF$alliances.blue.team_keys_3 <- str_remove(apiCallDF$alliances.blue.team_keys_3, fixed(")"))
+
+apiCallDF$alliances.red.team_keys_1 <- str_remove(apiCallDF$alliances.red.team_keys_1, fixed("c(\"frc"))
+apiCallDF$alliances.red.team_keys_1 <- str_remove(apiCallDF$alliances.red.team_keys_1, fixed("\""))
+apiCallDF$alliances.red.team_keys_2 <- str_remove(apiCallDF$alliances.red.team_keys_2, fixed("frc"))
+apiCallDF$alliances.red.team_keys_2 <- str_remove_all(apiCallDF$alliances.red.team_keys_2, fixed("\""))
+apiCallDF$alliances.red.team_keys_3 <- str_remove(apiCallDF$alliances.red.team_keys_3, fixed("frc"))
+apiCallDF$alliances.red.team_keys_3 <- str_remove_all(apiCallDF$alliances.red.team_keys_3, fixed("\""))
+apiCallDF$alliances.red.team_keys_3 <- str_remove(apiCallDF$alliances.red.team_keys_3, fixed(")"))
+
+
+try(
+for (i in dataBlue1$`Team #`) {
+
+  dataSubset <- dataBlue1[grep(i,dataBlue1$`Team #`),]
+  
+  write_json(dataSubset,paste(getwd(),"/team", i ,".json", sep = ""))
+})
+try(
+for (i in dataBlue2$`Team #`) {
+
+  dataSubset2 <- dataBlue2[grep(i,dataBlue2$`Team #`),]
+  
+  write_json(dataSubset2, paste(getwd(), "/team", i, ".json", sep = ""))
+})

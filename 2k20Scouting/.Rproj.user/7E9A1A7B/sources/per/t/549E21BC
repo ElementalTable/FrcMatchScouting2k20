@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1566947123361.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2970277389",
+    "id" : "549E21BC",
+    "lastKnownWriteTime" : 1578962585,
+    "last_content_update" : 1578962585118,
+    "path" : "~/2k20scouting/global.r",
+    "project_path" : "global.r",
+    "properties" : {
+        "cursorPosition" : "73,2",
+        "scrollLine" : "44"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 4,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

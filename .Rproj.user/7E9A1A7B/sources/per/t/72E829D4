@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1566946985002.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1067671146",
+    "id" : "72E829D4",
+    "lastKnownWriteTime" : 1578703799,
+    "last_content_update" : 1578703799313,
+    "path" : "~/2k20scouting/Packages/install.R",
+    "project_path" : "Packages/install.R",
+    "properties" : {
+        "cursorPosition" : "53,0",
+        "scrollLine" : "0"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

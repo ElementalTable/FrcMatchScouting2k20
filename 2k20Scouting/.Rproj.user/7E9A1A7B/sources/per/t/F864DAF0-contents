@@ -1,0 +1,343 @@
+shinyServer(function(input, output, session){
+  
+  DF1 <- readxl::read_excel("convertcsv (1).xlsx")
+  DF2 <- readxl::read_excel("convertcsv (1).xlsx")
+  DF3 <- readxl::read_excel("convertcsv (1).xlsx")
+  DF4 <- readxl::read_excel("convertcsv (1).xlsx")
+  DF5 <- readxl::read_excel("convertcsv (1).xlsx")
+  DF6 <- readxl::read_excel("convertcsv (1).xlsx")
+  
+  try(dataBlue1 <- read_json(paste(getwd(),"/dataOutBlue1.json", sep = ""), simplifyVector = TRUE))
+  try(dataBlue2 <- read_json(paste(getwd(),"/dataOutBlue2.json", sep = ""), simplifyVector = TRUE))
+  try(dataBlue3 <- read_json(paste(getwd(),"/dataOutBlue3.json", sep = ""), simplifyVector = TRUE))
+  try(dataRed1 <- read_json(paste(getwd(),"/dataOutRed1.json", sep = ""), simplifyVector = TRUE))
+  try(dataRed2 <- read_json(paste(getwd(),"/dataOutRed2.json", sep = ""), simplifyVector = TRUE))
+  try(dataRed3 <- read_json(paste(getwd(),"/dataOutRed3.json", sep = ""), simplifyVector = TRUE))
+  
+  #set.seed(1000)
+  #n <- 30
+  #sets up the message menu for the comments
+  # output$messageMenu <- renderMenu({
+  #   msgs <- apply(messageData, 1, function(row) {
+  #     messageItem(from = row[["from"]], message = row[["message"]], time = row[["datetime"]])
+  #   })
+  #   dropdownMenu(type = "messages", .list = msgs)
+  # })
+  # #sets up the values for the tasks menu
+  # output$tasks <- renderMenu({
+  #   nsgs <- apply(percent, 1, function(row){
+  #     taskItem(value = row[["percent"]], text = "Percent Complete", color = colorizer)
+  #   })
+  #   dropdownMenu(type = "tasks", .list = nsgs, badgeStatus = badgestats)
+  # })
+  # #outputs a graph based on the date inputs in the sidebar
+  # output$dateRange <- renderPlot(ggplot(over_time_complete %>% filter(Date >= input$dates[1] & Date <= input$dates[2]), aes(Date, cumsum(count)))+scale_x_date(date_labels = '%Y-%m-%d',date_breaks = "1 week")+theme(axis.text.x = element_text(angle = 90, hjust = 1))+geom_line(aes(group=1),color="red",size=0.5)+geom_text(aes(label=cumsum(count)), check_overlap = TRUE,nudge_x = 0, nudge_y = 0)+labs(title = "Completed by Day TT", x = 'Date',y = 'Completed'))
+# 
+#    value = reactive({
+#      input$Update
+#      round(runif(1,0,100),2)
+#    })
+  output$gauge1 <- renderC3Gauge({
+    C3Gauge(value())
+  })
+
+   observeEvent(input$click,{
+     cat("\nyou clicked on a pie with pie slice data:", input$click)
+   })
+  # output$lineBar <- renderC3LineBarChart({
+  #   C3LineBarChart(dataset = datesVScomplete)
+  # })
+
+  output$kpi1 <- renderC3Gauge({
+    C3Gauge(message = 5,iTotal = 10)
+  })
+  
+  output$kpi2 <- renderC3Gauge({
+    
+  })
+  
+  output$kpi3 <- renderC3Gauge({
+    
+  })
+  
+  output$overviewChart <- renderC3StackedChart({
+    
+  })
+  
+  output$pie1 <- renderC3pie({
+    
+  })
+  
+  output$pie2 <- renderC3pie({
+    
+  })
+  
+  output$pie3 <- renderC3pie({
+    
+  })
+  
+  output$pie4 <- renderC3pie({
+    
+  })
+  
+   output$stackedChart1 <- renderC3StackedChart({
+     C3StackedChart(idataset = over_time_complete
+                    ,icolors = list(count = "purple", IncompleteCount = "blue")
+                    ,types = list(count = "bar", IncompleteCount = "bar")
+                    ,groups = c("count","total")
+                    )
+     })
+  # observeEvent(input$update1, {
+  #   if(input$update1 == TRUE){
+  #   C3ChartProxy("stackedChart1") %>% zoomChart(input$dates[1],input$dates[2])
+  #   }else{
+  #     C3ChartProxy("stackedChart1") %>% zoomChart("2018-10-24","2019-04-05")
+  #   }
+  # })
+  # 
+  # observeEvent(input$update3,{
+  # if(input$update3 == TRUE){
+  #   C3ChartProxy("stackedChart1") %>% transformTo("line")
+  # }else{
+  #   C3ChartProxy("stackedChart1") %>% transformTo("area")
+  # }})
+  # 
+  # observeEvent(input$update4,{
+  #   if(input$update4 == TRUE){
+  #     C3ChartProxy("stackedChart1") %>% setGroups(c("count", "total"))
+  #   }else{
+  #     C3ChartProxy("stackedChart1") %>% setGroups(c("total","IncompleteCount"))
+  #   }
+  # })
+  # 
+  # observeEvent(input$update_type,{
+  #   info = list(type = input$type, series = input$dataset)
+  #   C3ChartProxy("stackedChart1") %>% setTypes(info)
+  # })
+  # 
+  #values <- reactiveValues()
+  
+
+  
+  observeEvent(input$scoutNum, {
+    if(input$scoutNum == 1 ){
+      save <- "save1"
+      DF1 <- as.data.table(DF1)[, lapply(.SD, `length<-`, nrow(apiCallDF)), by = `Team #`]
+      DF1$`Team #` <- apiCallDF$`alliances.blue.team_keys_1`
+      
+      try(
+        DF1 <- read_json(paste(getwd(),"/dataOutBlue1.json", sep = ""), simplifyVector = TRUE)
+      )
+      
+      observe({
+        if (!is.null(input$hot)) {
+          DF1 = hot_to_r(input$hot)
+        } else {
+          if (is.null(values[["DF1"]]))
+            DF1 <- DF1
+          else
+            DF1 <- values[["DF1"]]
+        }
+        values[["DF1"]] <- DF1
+      })
+      
+      output$hot <- renderRHandsontable({
+        DF1 <- DF1
+        if (!is.null(DF1))
+          rhandsontable(DF1, useTypes = as.logical(input$useType), stretchH = "all")
+      })
+      
+      ## Save 
+      if(save == "save1"){
+        print("save1 Value")
+        observeEvent(input$save, {
+          finalDF1 <- isolate(values[["DF1"]])
+          write_json(finalDF1, paste(getwd(),"/dataOutBlue1.json", sep = ""))
+        })
+      }
+      
+    } else if (input$scoutNum == 2){
+      save <- "save2"
+      print(save)
+      DF2 <- as.data.table(DF2)[, lapply(.SD, `length<-`, nrow(apiCallDF)), by = `Team #`]
+      DF2$`Team #` <- apiCallDF$`alliances.blue.team_keys_2`
+      
+      try(
+        DF2 <- read_json(paste(getwd(),"/dataOutBlue2.json", sep = ""), simplifyVector = TRUE)
+      )
+      
+      observe({
+        if (!is.null(input$hot)) {
+          DF2 = hot_to_r(input$hot)
+        } else {
+          if (is.null(values[["DF2"]]))
+            DF2 <- DF2
+          else
+            DF2 <- values[["DF2"]]
+        }
+        values[["DF2"]] <- DF2
+      })
+      
+      output$hot <- renderRHandsontable({
+        DF2 <- DF2
+        if (!is.null(DF2))
+          rhandsontable(DF2, useTypes = as.logical(input$useType), stretchH = "all")
+      })
+      
+      ## Save 
+      if(save  == "save2"){
+        print("save2 value")
+        observeEvent(input$save, {
+          finalDF2 <- isolate(values[["DF2"]])
+          write_json(finalDF2, paste(getwd(),"/dataOutBlue2.json", sep = ""))
+        })
+      }
+    } else if (input$scoutNum == 3) {
+      save <- "save3"
+      print(save)
+      DF3 <- as.data.table(DF3)[, lapply(.SD, `length<-`, nrow(apiCallDF)), by = `Team #`]
+      DF3$`Team #` <- apiCallDF$`alliances.blue.team_keys_3`
+      
+      try(
+        DF3 <- read_json(paste(getwd(),"/dataOutBlue3.json", sep = ""), simplifyVector = TRUE)
+      )
+      
+      observe({
+        if (!is.null(input$hot)) {
+          DF3 = hot_to_r(input$hot)
+        } else {
+          if (is.null(values[["DF3"]]))
+            DF3 <- DF3
+          else
+            DF3 <- values[["DF3"]]
+        }
+        values[["DF3"]] <- DF3
+      })
+      
+      output$hot <- renderRHandsontable({
+        DF3 <- DF3
+        if (!is.null(DF3))
+          rhandsontable(DF3, useTypes = as.logical(input$useType), stretchH = "all")
+      })
+      
+      ## Save 
+      if(save == "save3"){
+        print("save3 value")
+        print(save)
+        observeEvent(input$save, {
+          finalDF3 <- isolate(values[["DF3"]])
+          write_json(finalDF3, paste(getwd(),"/dataOutBlue3.json", sep = ""))
+        })
+      }
+    } else if (input$scoutNum == 4) {
+      save <- "save4"
+      print(save)
+      DF4 <- as.data.table(DF4)[, lapply(.SD, `length<-`, nrow(apiCallDF)), by = `Team #`]
+      DF4$`Team #` <- apiCallDF$`alliances.red.team_keys_1`
+      
+      try(
+        DF4 <- read_json(paste(getwd(),"/dataOutRed1.json", sep = ""),simplifyVector = TRUE)
+      )
+      
+      observe({
+        if (!is.null(input$hot)) {
+          DF4 = hot_to_r(input$hot)
+        } else {
+          if (is.null(values[["DF4"]]))
+            DF4 <- DF4
+          else
+            DF4 <- values[["DF4"]]
+        }
+        values[["DF4"]] <- DF4
+      })
+      
+      output$hot <- renderRHandsontable({
+        DF4 <- DF4
+        if (!is.null(DF4))
+          rhandsontable(DF4, useTypes = as.logical(input$useType), stretchH = "all")
+      })
+      
+      ## Save 
+      if(save  == "save4"){
+        print("save4 value")
+        observeEvent(input$save, {
+          finalDF4 <- isolate(values[["DF4"]])
+          write_json(finalDF4, paste(getwd(),"/dataOutRed1.json", sep = ""))
+        })
+      }
+    } else if (input$scoutNum == 5) {
+      save <- "save5"
+      print(save)
+      DF5 <- as.data.table(DF5)[, lapply(.SD, `length<-`, nrow(apiCallDF)), by = `Team #`]
+      DF5$`Team #` <- apiCallDF$`alliances.red.team_keys_2`
+
+      try(
+        DF5 <- read_json(paste(getwd(),"/dataOutRed2.json", sep = ""), simplifyVector = TRUE)
+      )
+      
+      observe({
+        if (!is.null(input$hot)) {
+          DF5 = hot_to_r(input$hot)
+        } else {
+          if (is.null(values[["DF5"]]))
+            DF5 <- DF5
+          else
+            DF5 <- values[["DF5"]]
+        }
+        values[["DF5"]] <- DF5
+      })
+      
+      output$hot <- renderRHandsontable({
+        DF5 <- DF5
+        if (!is.null(DF5))
+          rhandsontable(DF5, useTypes = as.logical(input$useType), stretchH = "all")
+      })
+      
+      ## Save 
+      if(save  == "save5 value"){
+        print("save5")
+        observeEvent(input$save, {
+          finalDF5 <- isolate(values[["DF5"]])
+          write_json(finalDF5, paste(getwd(),"/dataOutRed2.json", sep = ""))
+        })
+      }
+    } else if(input$scoutNum == 6) {
+      save <- "save6"
+      print(save)
+      DF6 <- as.data.table(DF6)[, lapply(.SD, `length<-`, nrow(apiCallDF)), by = `Team #`]
+      DF6$`Team #` <- apiCallDF$`alliances.red.team_keys_3`
+      
+      try(
+        DF6 <- read_json(paste(getwd(),"/dataOutRed3.json", sep = ""), simplifyVector = TRUE)
+      )
+      
+      observe({
+        if (!is.null(input$hot)) {
+          DF6 = hot_to_r(input$hot)
+        } else {
+          if (is.null(values[["DF6"]]))
+            DF6 <- DF6
+          else
+            DF6 <- values[["DF6"]]
+        }
+        values[["DF6"]] <- DF6
+      })
+      
+      output$hot <- renderRHandsontable({
+        DF6 <- DF6
+        if (!is.null(DF6))
+          rhandsontable(DF6, useTypes = as.logical(input$useType), stretchH = "all")
+      })
+      
+      ## Save 
+      if(save == "save6"){
+        print("save6 value")
+        observeEvent(input$save, {
+          finalDF6 <- isolate(values[["DF6"]])
+          write_json(finalDF6, paste(getwd(),"/dataOutRed3.json", sep = ""))
+        })
+      }
+    }
+  })
+})
+

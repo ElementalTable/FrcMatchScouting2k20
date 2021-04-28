@@ -1,0 +1,512 @@
+badgestats <- "danger"
+colorizer <- "red"
+}
+getSeries <- function(n = 100, drift = 0.1, walk = 4, scale=100){
+y <- scale * cumsum(rnorm(n = n, mean = drift, sd = sqrt(walk)))
+y <- round(y)
+return(y + abs(min(y)))
+}
+#drones_removed$nisc_inspected_date <- drones_removed %>% separate(nisc_inspected_date, c('Date','Time'),' ')
+#datesVScomplete <- data.frame("Time" = drones_removed$nisc_inspected_date$Date, "Complete"=sum(drones_removed$A_TTComplete), "Incomplete"= sum(drones_removed$A_TTInComplete))
+#datesVScomplete$Time <- as.Date(datesVScomplete$Time, format = "%Y-%m-%d")
+#datesVScomplete <- datesVScomplete %>% drop_na
+# DF <- data.frame(Value = 1:10, Status = TRUE, Name = LETTERS[1:10],
+#                  Date =  seq(from = Sys.Date(), by = "days", length.out = 10),
+#                  stringsAsFactors = FALSE)
+DF <- readxl::read_excel("convertcsv (1).xlsx")
+try(
+DF <- readRDS("dataOut.Rds")
+)
+apiCallDF$alliances.blue.team_keys_1 <- str_remove_all(apiCallDF$alliances.blue.team_keys_1, "\\c()\" )
+#set up values for messageData
+inspectedBy <- inputdata$nisc_inspected_by
+inspectedComments <- inputdata$InspNotes
+inspectedDate <- inputdata$nisc_inspected_date
+#create messageData and remove N/A values
+messageData <- data.frame("from" = inspectedBy, "message" = inspectedComments,"datetime" = inspectedDate)
+messageData <- messageData %>% drop_na
+#creates percent complete
+total <- sum(inputdata$A_TTTotal)
+complete <- sum(inputdata$A_TTComplete)
+percent <- (complete/total)*100
+percent <- data.frame(percent)
+percent$percent <- round(percent$percent)
+#formulas
+grouping_totals <- function(df){
+require("dplyr")
+require("lazyeval")
+out<-drones_removed %>% group_by_(df) %>% filter(A_TTComplete > 0) %>%
+summarize(count = n())
+return(out)
+}
+grouping_totals_incomplete <- function(df){
+require("dplyr")
+require("lazyeval")
+out<-drones_removed %>% group_by_(df) %>% filter(A_TTInComplete > 0) %>%
+summarize(count = n())
+return(out)
+}
+count_by_type <- function(table,df){
+require("dplyr")
+require("lazyeval")
+out <- table %>% group_by_(df) %>% summarise(count = n())
+return(out)
+}
+dataset <- data.frame(Time=c("2016-01-05","2016-01-12","2016-01-24"),
+GREEN=c(0.1,0,0.2),
+RED=c(0.9,1,0.8),
+Total=c(320,210,190))
+#creates data set for date graphing
+over_time_complete <- grouping_totals("nisc_inspected_date")
+over_time_complete <- over_time_complete %>% separate(nisc_inspected_date, c('Date','Time'),' ', extra = 'merge',)
+over_time_complete <- over_time_complete %>% mutate(Date = as.Date(Date))
+over_time_complete <- over_time_complete %>% ddply("Date",numcolwise(sum))
+over_time_complete$Date <- as.Date(over_time_complete$Date, format = "%Y-%m-%d")
+over_time_complete$count <- cumsum(over_time_complete$count)
+IncompleteCount <- total - over_time_complete$count
+over_time_complete <- over_time_complete[order(over_time_complete$Date),]
+over_time_complete <- cbind(over_time_complete, IncompleteCount)
+over_time_complete <- transform(over_time_complete, count = as.numeric(count))
+over_time_complete <- transform(over_time_complete, IncompleteCount = as.numeric(IncompleteCount))
+over_time_complete <- cbind(over_time_complete, total)
+#creates badgestats and gives it a value
+if(percent > 50){
+badgestats <- "success"
+colorizer <- "green"
+}
+if(50 > percent & percent > 20){
+badgestats <- "warning"
+colorizer <- 'yellow'
+}else{
+badgestats <- "danger"
+colorizer <- "red"
+}
+getSeries <- function(n = 100, drift = 0.1, walk = 4, scale=100){
+y <- scale * cumsum(rnorm(n = n, mean = drift, sd = sqrt(walk)))
+y <- round(y)
+return(y + abs(min(y)))
+}
+#drones_removed$nisc_inspected_date <- drones_removed %>% separate(nisc_inspected_date, c('Date','Time'),' ')
+#datesVScomplete <- data.frame("Time" = drones_removed$nisc_inspected_date$Date, "Complete"=sum(drones_removed$A_TTComplete), "Incomplete"= sum(drones_removed$A_TTInComplete))
+#datesVScomplete$Time <- as.Date(datesVScomplete$Time, format = "%Y-%m-%d")
+#datesVScomplete <- datesVScomplete %>% drop_na
+# DF <- data.frame(Value = 1:10, Status = TRUE, Name = LETTERS[1:10],
+#                  Date =  seq(from = Sys.Date(), by = "days", length.out = 10),
+#                  stringsAsFactors = FALSE)
+DF <- readxl::read_excel("convertcsv (1).xlsx")
+try(
+DF <- readRDS("dataOut.Rds")
+)
+apiCallDF$alliances.blue.team_keys_1 <- str_remove_all(apiCallDF$alliances.blue.team_keys_1, "\\c()\" )
+#set up values for messageData
+inspectedBy <- inputdata$nisc_inspected_by
+inspectedComments <- inputdata$InspNotes
+inspectedDate <- inputdata$nisc_inspected_date
+#create messageData and remove N/A values
+messageData <- data.frame("from" = inspectedBy, "message" = inspectedComments,"datetime" = inspectedDate)
+messageData <- messageData %>% drop_na
+#creates percent complete
+total <- sum(inputdata$A_TTTotal)
+complete <- sum(inputdata$A_TTComplete)
+percent <- (complete/total)*100
+percent <- data.frame(percent)
+percent$percent <- round(percent$percent)
+#formulas
+grouping_totals <- function(df){
+require("dplyr")
+require("lazyeval")
+out<-drones_removed %>% group_by_(df) %>% filter(A_TTComplete > 0) %>%
+summarize(count = n())
+return(out)
+}
+grouping_totals_incomplete <- function(df){
+require("dplyr")
+require("lazyeval")
+out<-drones_removed %>% group_by_(df) %>% filter(A_TTInComplete > 0) %>%
+summarize(count = n())
+return(out)
+}
+count_by_type <- function(table,df){
+require("dplyr")
+require("lazyeval")
+out <- table %>% group_by_(df) %>% summarise(count = n())
+return(out)
+}
+dataset <- data.frame(Time=c("2016-01-05","2016-01-12","2016-01-24"),
+GREEN=c(0.1,0,0.2),
+RED=c(0.9,1,0.8),
+Total=c(320,210,190))
+#creates data set for date graphing
+over_time_complete <- grouping_totals("nisc_inspected_date")
+over_time_complete <- over_time_complete %>% separate(nisc_inspected_date, c('Date','Time'),' ', extra = 'merge',)
+over_time_complete <- over_time_complete %>% mutate(Date = as.Date(Date))
+over_time_complete <- over_time_complete %>% ddply("Date",numcolwise(sum))
+over_time_complete$Date <- as.Date(over_time_complete$Date, format = "%Y-%m-%d")
+over_time_complete$count <- cumsum(over_time_complete$count)
+IncompleteCount <- total - over_time_complete$count
+over_time_complete <- over_time_complete[order(over_time_complete$Date),]
+over_time_complete <- cbind(over_time_complete, IncompleteCount)
+over_time_complete <- transform(over_time_complete, count = as.numeric(count))
+over_time_complete <- transform(over_time_complete, IncompleteCount = as.numeric(IncompleteCount))
+over_time_complete <- cbind(over_time_complete, total)
+#creates badgestats and gives it a value
+if(percent > 50){
+badgestats <- "success"
+colorizer <- "green"
+}
+if(50 > percent & percent > 20){
+badgestats <- "warning"
+colorizer <- 'yellow'
+}else{
+badgestats <- "danger"
+colorizer <- "red"
+}
+getSeries <- function(n = 100, drift = 0.1, walk = 4, scale=100){
+y <- scale * cumsum(rnorm(n = n, mean = drift, sd = sqrt(walk)))
+y <- round(y)
+return(y + abs(min(y)))
+}
+#drones_removed$nisc_inspected_date <- drones_removed %>% separate(nisc_inspected_date, c('Date','Time'),' ')
+#datesVScomplete <- data.frame("Time" = drones_removed$nisc_inspected_date$Date, "Complete"=sum(drones_removed$A_TTComplete), "Incomplete"= sum(drones_removed$A_TTInComplete))
+#datesVScomplete$Time <- as.Date(datesVScomplete$Time, format = "%Y-%m-%d")
+#datesVScomplete <- datesVScomplete %>% drop_na
+# DF <- data.frame(Value = 1:10, Status = TRUE, Name = LETTERS[1:10],
+#                  Date =  seq(from = Sys.Date(), by = "days", length.out = 10),
+#                  stringsAsFactors = FALSE)
+DF <- readxl::read_excel("convertcsv (1).xlsx")
+try(
+DF <- readRDS("dataOut.Rds")
+)
+runApp()
+apiCallDF$alliances.blue.team_keys_1 <- str_remove_all(apiCallDF$alliances.blue.team_keys_1, fixed("c(") )
+apiCallDF$alliances.blue.team_keys_1 <- str_remove_all(apiCallDF$alliances.blue.team_keys_1, fixed("c(") )
+apiCallDF$alliances.blue.team_keys_1 <- str_remove_all(apiCallDF$alliances.blue.team_keys_1, fixed("c('") )
+raw.result <- GET("https://www.thebluealliance.com/api/v3/event/2019code/matches/simple?X-TBA-Auth-Key=T5l4si2D8i7FOrZc9hXhUlI3CRRU1elBsM6YflBdPKQfdCExpgT0SQHQ6SuWNkMq")
+apiCall <- content(raw.result, "text")
+apiCallFromJSON <- fromJSON(apiCall, flatten = TRUE)
+apiCallDF <- as.data.frame(apiCallFromJSON)
+rm(apiCall, apiCallFromJSON, raw.result)
+apiCallDF <- apiCallDF %>%
+select(-actual_time, -comp_level, -event_key, -key, -match_number, -predicted_time, -set_number, -time, -winning_alliance, -`alliances.blue.dq_team_keys`, -`alliances.blue.score`, -`alliances.blue.surrogate_team_keys`, -`alliances.red.dq_team_keys`, -`alliances.red.score`, -`alliances.red.surrogate_team_keys`)
+apiCallDF <- concat.split(apiCallDF, 1, sep = ",")
+apiCallDF <- concat.split(apiCallDF, 2, sep = ",")
+apiCallDF <- apiCallDF %>%
+select(-`alliances.blue.team_keys`, -`alliances.red.team_keys`)
+apiCallDF$alliances.blue.team_keys_1 <- str_remove_all(apiCallDF$alliances.blue.team_keys_1, fixed("c('") )
+apiCallDF$alliances.blue.team_keys_1 <- str_remove_all(apiCallDF$alliances.blue.team_keys_1, fixed("c(") )
+apiCallDF$alliances.blue.team_keys_1 <- str_remove_all(apiCallDF$alliances.blue.team_keys_1, fixed("c("'frc'") )
+#set up values for messageData
+inspectedBy <- inputdata$nisc_inspected_by
+inspectedComments <- inputdata$InspNotes
+inspectedDate <- inputdata$nisc_inspected_date
+#create messageData and remove N/A values
+messageData <- data.frame("from" = inspectedBy, "message" = inspectedComments,"datetime" = inspectedDate)
+messageData <- messageData %>% drop_na
+#creates percent complete
+total <- sum(inputdata$A_TTTotal)
+complete <- sum(inputdata$A_TTComplete)
+percent <- (complete/total)*100
+percent <- data.frame(percent)
+percent$percent <- round(percent$percent)
+#formulas
+grouping_totals <- function(df){
+require("dplyr")
+require("lazyeval")
+out<-drones_removed %>% group_by_(df) %>% filter(A_TTComplete > 0) %>%
+summarize(count = n())
+return(out)
+}
+grouping_totals_incomplete <- function(df){
+require("dplyr")
+require("lazyeval")
+out<-drones_removed %>% group_by_(df) %>% filter(A_TTInComplete > 0) %>%
+summarize(count = n())
+return(out)
+}
+count_by_type <- function(table,df){
+require("dplyr")
+require("lazyeval")
+out <- table %>% group_by_(df) %>% summarise(count = n())
+return(out)
+}
+dataset <- data.frame(Time=c("2016-01-05","2016-01-12","2016-01-24"),
+GREEN=c(0.1,0,0.2),
+RED=c(0.9,1,0.8),
+Total=c(320,210,190))
+#creates data set for date graphing
+over_time_complete <- grouping_totals("nisc_inspected_date")
+over_time_complete <- over_time_complete %>% separate(nisc_inspected_date, c('Date','Time'),' ', extra = 'merge',)
+over_time_complete <- over_time_complete %>% mutate(Date = as.Date(Date))
+over_time_complete <- over_time_complete %>% ddply("Date",numcolwise(sum))
+over_time_complete$Date <- as.Date(over_time_complete$Date, format = "%Y-%m-%d")
+over_time_complete$count <- cumsum(over_time_complete$count)
+IncompleteCount <- total - over_time_complete$count
+over_time_complete <- over_time_complete[order(over_time_complete$Date),]
+over_time_complete <- cbind(over_time_complete, IncompleteCount)
+over_time_complete <- transform(over_time_complete, count = as.numeric(count))
+over_time_complete <- transform(over_time_complete, IncompleteCount = as.numeric(IncompleteCount))
+over_time_complete <- cbind(over_time_complete, total)
+#creates badgestats and gives it a value
+if(percent > 50){
+badgestats <- "success"
+colorizer <- "green"
+}
+if(50 > percent & percent > 20){
+badgestats <- "warning"
+colorizer <- 'yellow'
+}else{
+badgestats <- "danger"
+colorizer <- "red"
+}
+getSeries <- function(n = 100, drift = 0.1, walk = 4, scale=100){
+y <- scale * cumsum(rnorm(n = n, mean = drift, sd = sqrt(walk)))
+y <- round(y)
+return(y + abs(min(y)))
+}
+#drones_removed$nisc_inspected_date <- drones_removed %>% separate(nisc_inspected_date, c('Date','Time'),' ')
+#datesVScomplete <- data.frame("Time" = drones_removed$nisc_inspected_date$Date, "Complete"=sum(drones_removed$A_TTComplete), "Incomplete"= sum(drones_removed$A_TTInComplete))
+#datesVScomplete$Time <- as.Date(datesVScomplete$Time, format = "%Y-%m-%d")
+#datesVScomplete <- datesVScomplete %>% drop_na
+# DF <- data.frame(Value = 1:10, Status = TRUE, Name = LETTERS[1:10],
+#                  Date =  seq(from = Sys.Date(), by = "days", length.out = 10),
+#                  stringsAsFactors = FALSE)
+DF <- readxl::read_excel("convertcsv (1).xlsx")
+try(
+DF <- readRDS("dataOut.Rds")
+)
+apiCallDF$alliances.blue.team_keys_1 <- str_remove_all(apiCallDF$alliances.blue.team_keys_1, fixed("c(frc") )
+raw.result <- GET("https://www.thebluealliance.com/api/v3/event/2019code/matches/simple?X-TBA-Auth-Key=T5l4si2D8i7FOrZc9hXhUlI3CRRU1elBsM6YflBdPKQfdCExpgT0SQHQ6SuWNkMq")
+apiCall <- content(raw.result, "text")
+apiCallFromJSON <- fromJSON(apiCall, flatten = TRUE)
+apiCallDF <- as.data.frame(apiCallFromJSON)
+rm(apiCall, apiCallFromJSON, raw.result)
+apiCallDF <- apiCallDF %>%
+select(-actual_time, -comp_level, -event_key, -key, -match_number, -predicted_time, -set_number, -time, -winning_alliance, -`alliances.blue.dq_team_keys`, -`alliances.blue.score`, -`alliances.blue.surrogate_team_keys`, -`alliances.red.dq_team_keys`, -`alliances.red.score`, -`alliances.red.surrogate_team_keys`)
+apiCallDF <- concat.split(apiCallDF, 1, sep = ",")
+apiCallDF <- concat.split(apiCallDF, 2, sep = ",")
+apiCallDF <- apiCallDF %>%
+select(-`alliances.blue.team_keys`, -`alliances.red.team_keys`)
+apiCallDF$alliances.blue.team_keys_1 <- str_remove_all(apiCallDF$alliances.blue.team_keys_1, fixed("c(frc") )
+apiCallDF$alliances.blue.team_keys_1 <- str_remove_all(apiCallDF$alliances.blue.team_keys_1, fixed("c(\"frc") )
+apiCallDF$alliances.blue.team_keys_1 <- str_remove_all(apiCallDF$alliances.blue.team_keys_1, fixed("c(\"frc****\"") )
+raw.result <- GET("https://www.thebluealliance.com/api/v3/event/2019code/matches/simple?X-TBA-Auth-Key=T5l4si2D8i7FOrZc9hXhUlI3CRRU1elBsM6YflBdPKQfdCExpgT0SQHQ6SuWNkMq")
+apiCall <- content(raw.result, "text")
+apiCallFromJSON <- fromJSON(apiCall, flatten = TRUE)
+apiCallDF <- as.data.frame(apiCallFromJSON)
+rm(apiCall, apiCallFromJSON, raw.result)
+apiCallDF <- apiCallDF %>%
+select(-actual_time, -comp_level, -event_key, -key, -match_number, -predicted_time, -set_number, -time, -winning_alliance, -`alliances.blue.dq_team_keys`, -`alliances.blue.score`, -`alliances.blue.surrogate_team_keys`, -`alliances.red.dq_team_keys`, -`alliances.red.score`, -`alliances.red.surrogate_team_keys`)
+apiCallDF <- concat.split(apiCallDF, 1, sep = ",")
+apiCallDF <- concat.split(apiCallDF, 2, sep = ",")
+apiCallDF <- apiCallDF %>%
+select(-`alliances.blue.team_keys`, -`alliances.red.team_keys`)
+apiCallDF$alliances.blue.team_keys_1 <- str_remove_all(apiCallDF$alliances.blue.team_keys_1, fixed("c(\"frc****\"") )
+apiCallDF$alliances.blue.team_keys_1 <- str_remove_all(apiCallDF$alliances.blue.team_keys_1, fixed("c(\"frc****\"") )
+apiCallDF$alliances.blue.team_keys_1 <- str_remove_all(apiCallDF$alliances.blue.team_keys_1, fixed("c(\"frc****\"") )
+apiCallDF$alliances.blue.team_keys_1 <- str_remove_all(apiCallDF$alliances.blue.team_keys_1, fixed("c(\"frc\"") )
+raw.result <- GET("https://www.thebluealliance.com/api/v3/event/2019code/matches/simple?X-TBA-Auth-Key=T5l4si2D8i7FOrZc9hXhUlI3CRRU1elBsM6YflBdPKQfdCExpgT0SQHQ6SuWNkMq")
+apiCall <- content(raw.result, "text")
+apiCallFromJSON <- fromJSON(apiCall, flatten = TRUE)
+apiCallDF <- as.data.frame(apiCallFromJSON)
+rm(apiCall, apiCallFromJSON, raw.result)
+apiCallDF <- apiCallDF %>%
+select(-actual_time, -comp_level, -event_key, -key, -match_number, -predicted_time, -set_number, -time, -winning_alliance, -`alliances.blue.dq_team_keys`, -`alliances.blue.score`, -`alliances.blue.surrogate_team_keys`, -`alliances.red.dq_team_keys`, -`alliances.red.score`, -`alliances.red.surrogate_team_keys`)
+apiCallDF <- concat.split(apiCallDF, 1, sep = ",")
+apiCallDF <- concat.split(apiCallDF, 2, sep = ",")
+apiCallDF <- apiCallDF %>%
+select(-`alliances.blue.team_keys`, -`alliances.red.team_keys`)
+apiCallDF$alliances.blue.team_keys_1 <- str_remove_all(apiCallDF$alliances.blue.team_keys_1, fixed("c(\"frc\"") )
+apiCallDF$alliances.blue.team_keys_1 <- str_remove_all(apiCallDF$alliances.blue.team_keys_1, fixed(c("c(\"frc")", "\""))
+apiCallDF$alliances.blue.team_keys_1 <- str_remove_all(apiCallDF$alliances.blue.team_keys_1, fixed(c("c(\"frc"", "\""))
+raw.result <- GET("https://www.thebluealliance.com/api/v3/event/2019code/matches/simple?X-TBA-Auth-Key=T5l4si2D8i7FOrZc9hXhUlI3CRRU1elBsM6YflBdPKQfdCExpgT0SQHQ6SuWNkMq")
+apiCall <- content(raw.result, "text")
+apiCallFromJSON <- fromJSON(apiCall, flatten = TRUE)
+apiCallDF <- as.data.frame(apiCallFromJSON)
+rm(apiCall, apiCallFromJSON, raw.result)
+apiCallDF <- apiCallDF %>%
+select(-actual_time, -comp_level, -event_key, -key, -match_number, -predicted_time, -set_number, -time, -winning_alliance, -`alliances.blue.dq_team_keys`, -`alliances.blue.score`, -`alliances.blue.surrogate_team_keys`, -`alliances.red.dq_team_keys`, -`alliances.red.score`, -`alliances.red.surrogate_team_keys`)
+apiCallDF <- concat.split(apiCallDF, 1, sep = ",")
+apiCallDF <- concat.split(apiCallDF, 2, sep = ",")
+apiCallDF <- apiCallDF %>%
+select(-`alliances.blue.team_keys`, -`alliances.red.team_keys`)
+?c
+apiCallDF$alliances.blue.team_keys_1 <- str_remove_all(apiCallDF$alliances.blue.team_keys_1, fixed(c("c(\"frc"", "\"")))
+apiCallDF$alliances.blue.team_keys_1 <- str_remove_all(apiCallDF$alliances.blue.team_keys_1, fixed(c("c(\"frc", "\"")))
+raw.result <- GET("https://www.thebluealliance.com/api/v3/event/2019code/matches/simple?X-TBA-Auth-Key=T5l4si2D8i7FOrZc9hXhUlI3CRRU1elBsM6YflBdPKQfdCExpgT0SQHQ6SuWNkMq")
+apiCall <- content(raw.result, "text")
+apiCallFromJSON <- fromJSON(apiCall, flatten = TRUE)
+apiCallDF <- as.data.frame(apiCallFromJSON)
+rm(apiCall, apiCallFromJSON, raw.result)
+apiCallDF <- apiCallDF %>%
+select(-actual_time, -comp_level, -event_key, -key, -match_number, -predicted_time, -set_number, -time, -winning_alliance, -`alliances.blue.dq_team_keys`, -`alliances.blue.score`, -`alliances.blue.surrogate_team_keys`, -`alliances.red.dq_team_keys`, -`alliances.red.score`, -`alliances.red.surrogate_team_keys`)
+apiCallDF <- concat.split(apiCallDF, 1, sep = ",")
+apiCallDF <- concat.split(apiCallDF, 2, sep = ",")
+apiCallDF <- apiCallDF %>%
+select(-`alliances.blue.team_keys`, -`alliances.red.team_keys`)
+apiCallDF$alliances.blue.team_keys_1 <- str_remove_all(apiCallDF$alliances.blue.team_keys_1, fixed(c("c(\"frc", "\"")))
+shiny::runApp()
+#call libraries
+library(shiny)
+library(shinydashboard)
+library(shinyjs)
+library(readxl)
+library(plyr)
+library(tibble)
+library(dplyr)
+library(haven)
+library(tidyr)
+library(lazyeval)
+library(tidyverse)
+library(cmna)
+library(htmlwidgets)
+library(plotly)
+library(ggplot2)
+library(devtools)
+library(C3)
+library(shinyBS)
+library(rhandsontable)
+library(jsonlite)
+library(httr)
+library(lubridate)
+library(splitstackshape)
+library(stringr)
+runApp()
+apiCallDF$alliances.blue.team_keys_1 <- str_remove_all(apiCallDF$alliances.blue.team_keys_1, fixed(c("c(\"frc")))
+apiCallDF$alliances.blue.team_keys_1 <- str_remove_all(apiCallDF$alliances.blue.team_keys_1, fixed("\""))
+apiCallDF$alliances.blue.team_keys_1 <- str_remove(apiCallDF$alliances.blue.team_keys_1, fixed("c(\"frc"))
+apiCallDF$alliances.blue.team_keys_1 <- str_remove(apiCallDF$alliances.blue.team_keys_1, fixed("\""))
+raw.result <- GET("https://www.thebluealliance.com/api/v3/event/2019code/matches/simple?X-TBA-Auth-Key=T5l4si2D8i7FOrZc9hXhUlI3CRRU1elBsM6YflBdPKQfdCExpgT0SQHQ6SuWNkMq")
+apiCall <- content(raw.result, "text")
+apiCallFromJSON <- fromJSON(apiCall, flatten = TRUE)
+apiCallDF <- as.data.frame(apiCallFromJSON)
+rm(apiCall, apiCallFromJSON, raw.result)
+apiCallDF <- apiCallDF %>%
+select(-actual_time, -comp_level, -event_key, -key, -match_number, -predicted_time, -set_number, -time, -winning_alliance, -`alliances.blue.dq_team_keys`, -`alliances.blue.score`, -`alliances.blue.surrogate_team_keys`, -`alliances.red.dq_team_keys`, -`alliances.red.score`, -`alliances.red.surrogate_team_keys`)
+apiCallDF <- concat.split(apiCallDF, 1, sep = ",")
+apiCallDF <- concat.split(apiCallDF, 2, sep = ",")
+apiCallDF <- apiCallDF %>%
+select(-`alliances.blue.team_keys`, -`alliances.red.team_keys`)
+apiCallDF$alliances.blue.team_keys_1 <- str_remove(apiCallDF$alliances.blue.team_keys_1, fixed("c(\"frc"))
+apiCallDF$alliances.blue.team_keys_1 <- str_remove(apiCallDF$alliances.blue.team_keys_1, fixed("\""))
+apiCallDF$alliances.blue.team_keys_2 <- str_remove(apiCallDF$alliances.blue.team_keys_2, fixed("\""))
+apiCallDF$alliances.blue.team_keys_2 <- str_remove_all(apiCallDF$alliances.blue.team_keys_2, fixed("\""))
+apiCallDF$alliances.blue.team_keys_2 <- str_remove(apiCallDF$alliances.blue.team_keys_2, fixed("frc"))
+apiCallDF$alliances.blue.team_keys_3 <- str_remove_all(apiCallDF$alliances.blue.team_keys_3, fixed("\""))
+apiCallDF$alliances.blue.team_keys_3 <- str_remove(apiCallDF$alliances.blue.team_keys_3, fixed("frc"))
+apiCallDF$alliances.blue.team_keys_3 <- str_remove(apiCallDF$alliances.blue.team_keys_3, fixed(")"))
+apiCallDF$alliances.red.team_keys_1 <- str_remove(apiCallDF$alliances.red.team_keys_1, fixed("c(\"frc"))
+apiCallDF$alliances.red.team_keys_1 <- str_remove(apiCallDF$alliances.red.team_keys_1, fixed("\""))
+apiCallDF$alliances.red.team_keys_2 <- str_remove(apiCallDF$alliances.red.team_keys_2, fixed("frc"))
+apiCallDF$alliances.red.team_keys_2 <- str_remove_all(apiCallDF$alliances.red.team_keys_2, fixed("\""))
+apiCallDF$alliances.red.team_keys_3 <- str_remove(apiCallDF$alliances.red.team_keys_3, fixed("frc"))
+apiCallDF$alliances.red.team_keys_3 <- str_remove_all(apiCallDF$alliances.red.team_keys_3, fixed("\""))
+apiCallDF$alliances.red.team_keys_3 <- str_remove(apiCallDF$alliances.red.team_keys_3, fixed(")"))
+?cbind
+cbind.data.frame(DF$`Team #`, apiCallDF$`alliances.blue.team_keys_1`)
+View(DF)
+cbind.data.frame(DF$`Team #`, apiCallDF$`alliances.blue.team_keys_1`)
+add_row(DF,nrow(apiCallDF))
+add_row(DF$`Team #`,nrow(apiCallDF))
+?add_row
+add_row(DF,x = `Team #`, y = nrow(apiCallDF))
+View(DF)
+add_row(DF,x = 8, y = nrow(apiCallDF))
+add_row(DF, 8, nrow(apiCallDF))
+add_row(DF, `Team #`, nrow(apiCallDF))
+add_row(DF, `Team #`)
+add_row(DF, "Team #")
+add_row(DF, Team #)
+}
+})
+add_row(DF, `Team #``)
+add_row(DF, `Team #`)
+add_row(DF, DF$`Team #`)
+add_row(DF, `Team #`=nrow(apiCallDF))
+add_row(DF, `Team #`=nrow(apiCallDF))
+View(DF)
+install.packages("data.table")
+install.packages("data.table")
+install.packages("data.table")
+#call libraries
+library(shiny)
+library(shinydashboard)
+library(shinyjs)
+library(readxl)
+library(plyr)
+library(tibble)
+library(dplyr)
+library(haven)
+library(tidyr)
+library(lazyeval)
+library(tidyverse)
+library(cmna)
+library(htmlwidgets)
+library(plotly)
+library(ggplot2)
+library(devtools)
+library(C3)
+library(shinyBS)
+library(rhandsontable)
+library(jsonlite)
+library(httr)
+library(lubridate)
+library(splitstackshape)
+library(stringr)
+library(data.table)
+library(data.table)
+library(`data.table`)
+install.packages("data.table")
+source('~/2k20scouting/Packages/install.R', echo=TRUE)
+#call libraries
+library(shiny)
+library(shinydashboard)
+library(shinyjs)
+library(readxl)
+library(plyr)
+library(tibble)
+library(dplyr)
+library(haven)
+library(tidyr)
+library(lazyeval)
+library(tidyverse)
+library(cmna)
+library(htmlwidgets)
+library(plotly)
+library(ggplot2)
+library(devtools)
+library(C3)
+library(shinyBS)
+library(rhandsontable)
+library(jsonlite)
+library(httr)
+library(lubridate)
+library(splitstackshape)
+library(stringr)
+library(`data.table`)
+#call libraries
+library(shiny)
+library(shinydashboard)
+library(shinyjs)
+library(readxl)
+library(plyr)
+library(tibble)
+library(dplyr)
+library(haven)
+library(tidyr)
+library(lazyeval)
+library(tidyverse)
+library(cmna)
+library(htmlwidgets)
+library(plotly)
+library(ggplot2)
+library(devtools)
+library(C3)
+library(shinyBS)
+library(rhandsontable)
+library(jsonlite)
+library(httr)
+library(lubridate)
+library(splitstackshape)
+library(stringr)
+library(`data.table`)
+source('~/2k20scouting/Packages/install.R', echo=TRUE)
